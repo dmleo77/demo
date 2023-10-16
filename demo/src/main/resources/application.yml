@@ -1,0 +1,118 @@
+# Open API info
+springdoc:
+  packages-to-scan: com.marius.demo
+  paths-to-exclude: /swagger-resources/**
+  writer-with-default-pretty-printer: true
+  # URL to see Swagger: http://server:port/swagger-ui.html
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
+    docExpansion: none
+    disable-swagger-default-url: true
+  docs:
+    title: Demo microservice
+    description: retrieve data from database
+    version: 1.0.0
+    terms: Product by Marius Danciu
+
+server:
+  port: 9150
+
+encrypt:
+  key: 'Ptt4KJ5Ladze8j4r'
+
+# WebClient configuration
+webclient:
+  max-in-memory-size: 20971520 #20MB
+
+# Spring core configuration
+spring:
+  application:
+    name: marius-demo
+  output:
+    ansi:
+      enabled: ALWAYS
+  # Spring Cloud configuration
+  cloud:
+    config:
+      fail-fast: true
+      import-check.enabled: false
+      retry:
+        max-attempts: 10
+        initial-interval: 4000
+        max-interval: 20000
+  # Jackson configuration
+  jackson:
+    default-property-inclusion: ALWAYS # See JsonInclude.Include enum for more info
+    property-naming-strategy: LOWER_CAMEL_CASE # See PropertyNamingStrategy class for mor info
+    deserialization:
+      fail_on_unknown_properties: false
+    serialization:
+      indent_output: true
+  #H2
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true
+    show-sql: true
+    ddl-auto: update
+  #flyway
+  flyway:
+    sql-migration-prefix: V
+    repeatable-sql-migration-prefix: R
+    sql-migration-separator: __
+    sql-migration-suffixes: .sql
+    validateMigrationNaming: true
+
+# Eureka configuration
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+    healthCheckUrlPath: /actuator/health
+    metadataMap:
+      startup: ${random.int}
+      api-docs-version: v3
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+
+# Spring Boot Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS # Don't use this option in production environments
+
+# Local profile configuration
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  sleuth:
+    sampler:
+      probability: 1.0
+
+# Server configuration
+server:
+  shutdown: graceful
+  ssl: #Check if it is needed
+    enabled: false
+
+# Logging levels
+logging.level:
+  root: INFO
+  cl.marius.demo.*: DEBUG
